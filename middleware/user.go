@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"bytes"
+	"encoding/json"
 	"first-crud/dto"
 	"first-crud/helpers"
 	"io"
@@ -15,7 +16,9 @@ func ValidCreate(handler http.Handler) http.Handler {
 		var jsonData dto.User
 		helpers.FormatJson(body, &jsonData)
 		if jsonData.Name == "" || jsonData.Email == "" || jsonData.Password == "" {
+			err := dto.DefaultError{Code: http.StatusBadRequest, Message: "Invalid Request"}
 			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(err)
 			return
 		}
 		handler.ServeHTTP(w, r)
