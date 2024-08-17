@@ -73,3 +73,13 @@ func FindOne(id int) dto.User {
 
 	return users
 }
+
+func Exclude(id int) error {
+	db := connection.Connect()
+	_, err := db.Exec("DELETE FROM user WHERE id = ?", id)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	return nil
+}

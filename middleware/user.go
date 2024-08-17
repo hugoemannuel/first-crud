@@ -5,8 +5,12 @@ import (
 	"encoding/json"
 	"first-crud/dto"
 	"first-crud/helpers"
+	"first-crud/service"
 	"io"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func ValidCreate(handler http.Handler) http.Handler {
@@ -23,5 +27,20 @@ func ValidCreate(handler http.Handler) http.Handler {
 		}
 		handler.ServeHTTP(w, r)
 	})
+}
 
+func ValidExclude(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		id := vars["id"]
+		convertedId, _ := strconv.Atoi(id)
+		user := service.FindOne(convertedId)
+		if user.Name == "" {
+			err := dto.DefaultError{Code: http.StatusNotFound, Message: "User not found"}
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(err)
+			return
+		}
+		handler.ServeHTTP(w, r)
+	})
 }

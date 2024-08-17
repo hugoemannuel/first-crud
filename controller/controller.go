@@ -46,6 +46,19 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func UserExclude(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	convertedId, _ := strconv.Atoi(id)
+	user := service.FindOne(convertedId)
+	if user.Name == "" {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+	service.Exclude(convertedId)
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func HelloWord(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello World"))
 }
