@@ -15,6 +15,6 @@ func User() *mux.Router {
 	r.HandleFunc("/users/{id}", controller.UserFindOne).Methods("GET")
 	r.Handle("/users", middleware.ValidCreate(http.HandlerFunc(controller.UserCreate))).Methods("POST")
 	r.Handle("/users/{id}", middleware.ValidExclude(http.HandlerFunc(controller.UserExclude))).Methods("DELETE")
-
+	r.Handle("/users/{id}", middleware.ValidUpdate(http.HandlerFunc(controller.Update))).Methods("PUT")
 	return r
 }

@@ -59,6 +59,19 @@ func UserExclude(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func HelloWord(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello World"))
+func Update(w http.ResponseWriter, r *http.Request) {
+	body, _ := io.ReadAll(r.Body)
+	vars := mux.Vars(r)
+	id := vars["id"]
+	convertedId, _ := strconv.Atoi(id)
+	var formatBody dto.User
+
+	helpers.FormatJson(body, &formatBody)
+	user, errQuery := service.Update(convertedId, formatBody.Name, formatBody.Email, formatBody.Password)
+
+	if errQuery != nil {
+		http.Error(w, "Unable to read request body", http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(user)
 }

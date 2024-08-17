@@ -83,3 +83,14 @@ func Exclude(id int) error {
 	defer db.Close()
 	return nil
 }
+
+func Update(id int, name string, email string, password string) (dto.User, error) {
+	db := connection.Connect()
+	_, err := db.Exec("UPDATE user SET name = ?, email = ?, password = ? WHERE id = ?", name, email, password, id)
+	if err != nil {
+		return dto.User{}, err
+	}
+	user := FindOne(id)
+	defer db.Close()
+	return user, nil
+}
